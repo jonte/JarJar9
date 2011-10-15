@@ -19,3 +19,9 @@ CAN I CONTRIBUTE?
 -----------------
 
 Yes! Send me pull requests at github.
+
+HOW DOES IT LOOK?
+-----------------
+
+It looks like this:
+![Screenshot](https://raw.github.com/jonte/JarJar9/master/Screenshot.png)
