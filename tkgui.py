@@ -19,19 +19,29 @@ from JarJar9 import JJB9
 from JarJar9 import Helpers
 import json
 from Tile import Tile
+#from matchdialog import MatchDialog
+from BoardFrame import BoardFrame
+from RackFrame import RackFrame
 
 class GUI:
     root = Tk()
     root.wm_title("JarJar9")
-    boardRefs = [[None for x in range(15)] for xx in range(15)]
-    rack = []
-    selectedPiece = None
     placedPieces = []
     activeGame = None
 
     def __init__(self):
         self.drawControls()
+        self.drawRackFrame()
+        self.drawBoardFrame()
         self.login()
+
+    def drawBoardFrame(self):
+        self.boardFrame = BoardFrame(self)
+        self.boardFrame.grid(row=0,column=0, columnspan=3)
+
+    def drawRackFrame(self):
+        self.rackFrame = RackFrame(self)
+        self.rackFrame.grid(row=1,column=2, sticky=E)
 
     def login(self):
         self.jjb9 = JJB9()
@@ -40,26 +50,35 @@ class GUI:
         self.jjb9.login(self.h.getUsername(), saltedPassword)
         self.chooseGame()
 
+    def setGameID(self, gid):
+        self.activeGame = gid
+
     def chooseGame(self):
+#        md = MatchDialog()
+#        selectedItem = None
+#        md.displayGames([('Maria', '<3', '1', lambda: self.setGameID(1)),\
+#                     ('Ivar','hej','2', lambda: self.setGameID(2))])
+#        md.root.wait_window(md.root)
         self.h.prettyPrintGames(self.jjb9.getGames())
         game = raw_input("Pick game with ID: ")
-        self.activeGame = game
+        self.setGameID(game)
+        print "Item", self.activeGame
 
     def syncAction(self):
         game    = json.loads(self.jjb9.getGame(self.activeGame))
-        self.drawBoard()
+        self.boardFrame.drawBoard()
         board   = game['content']['game']['tiles']
         self.h.printBoard(self.jjb9.staticTiles)
 
         for w in board:
-            self.setLetter(w[0],w[1],w[2])
-        self.clearRack()
+            self.boardFrame.setLetter(w[0],w[1],w[2])
+        self.rackFrame.clearRack()
         try:
             rack = game['content']['game']['players'][0]['rack']
         except KeyError:
             rack = game['content']['game']['players'][1]['rack']
         print "Your rack is: %s" % (' '.join(rack))
-        self.drawRack([(x, '1') for x in rack])
+        self.rackFrame.drawRack([(x, '1') for x in rack])
 
     # Controls are on the 15:th row, 0-14 are board cells
     def drawControls(self):
@@ -68,8 +87,8 @@ class GUI:
         playBtn = Button(self.root, text="Play!",\
                         command=lambda: self.playPieces())
 
-        syncBtn.grid(row=15, column=0, columnspan=3)
-        playBtn.grid(row=15, column=3, columnspan=3)
+        syncBtn.grid(row=1, column=0, sticky=W)
+        playBtn.grid(row=1, column=1, sticky=W)
 
     def playPieces(self):
         response = self.jjb9.playPieces(self.activeGame, self.placedPieces)
@@ -79,81 +98,20 @@ class GUI:
         self.syncAction()
         print response
 
-
-    def drawRack(self, rack):
-        for widget in self.rack:
-            widget.destroy()
-        self.rack = []
-        for i in range(7):
-            try:
-                w = Tile(self.root, letter = rack[i][0],
-                                    points = rack[i][1],
-                                    callback = lambda x: self.rackPieceSelect(x.widget.master),
-                                    color='lightblue')
-                w.grid(row = 15, column = 8+i)
-                self.rack.append(w)
-            except IndexError:
-                pass # There aren't enough tiles
-
-    def clearRack(self):
-        for x in self.rack:
-            x.destroy()
-           
-    def rackPieceSelect(self, piece):
-        piece.highlight()
-        self.selectedPiece = (piece.letter, piece.points, piece)
-
     def placePiece(self, widget):
-        if self.selectedPiece != None:
-            widget.draw(self.selectedPiece[0], self.selectedPiece[1], 'lightpink')
-            gridInfo = self.selectedPiece[2].grid_info()
+        selectedPiece = self.rackFrame.selectedPiece
+        if selectedPiece != None:
+            widget.draw(selectedPiece[0], selectedPiece[1], 'lightpink')
+            gridInfo = selectedPiece[2].grid_info()
             self.placedPieces.append((int(widget.grid_info()['column']),
                                       int(widget.grid_info()['row']),
-                                      self.selectedPiece[0],
+                                      selectedPiece[0],
                                       False))
-            self.selectedPiece[2].destroy()
-            self.selectedPiece = None
-
-    def drawBoard(self):
-        for y in range(0,15):
-            for x in range(0,15):
-                style = self.lookupTileStyle(x,y)
-                if style == 0:
-                   letter = ''
-                   points = ''
-                   color  = "lightgray"
-                elif style == 1:
-                   letter = 'DL'
-                   points = ''
-                   color  = "green"
-                elif style == 2:
-                   letter = 'TL'
-                   points = ''
-                   color  = "blue"
-                elif style == 3:
-                   letter = 'DW'
-                   points = ''
-                   color  = "orange"
-                elif style == 4:
-                   letter = 'TW'
-                   points = ''
-                   color  = "red"
-
-                w = Tile(  self.root, 
-                            letter=letter,
-                            points = points,
-                            callback = lambda x: self.placePiece(x.widget.master),
-                            color = color)
-                self.boardRefs[x][y] = w
-                w.grid(row=y, column=x)
+            selectedPiece[2].destroy()
+            self.rackFrame.selectedPiece = None
 
     def lookupTileStyle(self, x,y):
         return self.jjb9.staticTiles[y][x]
-
-    def setLetter(self, x, y, letter):
-        points = self.h.getLetterPoints(letter)
-        self.boardRefs[x][y].draw(letter,points)
-        self.boardRefs[x][y].lock()
 
 gui = GUI()
 mainloop()
