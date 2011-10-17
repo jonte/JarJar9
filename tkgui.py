@@ -22,6 +22,7 @@ from Tile import Tile
 #from matchdialog import MatchDialog
 from BoardFrame import BoardFrame
 from RackFrame import RackFrame
+from ControlsFrame import ControlsFrame
 
 class GUI:
     root = Tk()
@@ -37,11 +38,11 @@ class GUI:
 
     def drawBoardFrame(self):
         self.boardFrame = BoardFrame(self)
-        self.boardFrame.grid(row=0,column=0, columnspan=3)
+        self.boardFrame.grid(row=0,column=0, columnspan=2)
 
     def drawRackFrame(self):
         self.rackFrame = RackFrame(self)
-        self.rackFrame.grid(row=1,column=2, sticky=E)
+        self.rackFrame.grid(row=1,column=1, sticky=E)
 
     def login(self):
         self.jjb9 = JJB9()
@@ -80,15 +81,10 @@ class GUI:
         print "Your rack is: %s" % (' '.join(rack))
         self.rackFrame.drawRack([(x, '1') for x in rack])
 
-    # Controls are on the 15:th row, 0-14 are board cells
     def drawControls(self):
-        syncBtn = Button(self.root, text="Sync",\
-                         command=lambda: self.syncAction())
-        playBtn = Button(self.root, text="Play!",\
-                        command=lambda: self.playPieces())
-
-        syncBtn.grid(row=1, column=0, sticky=W)
-        playBtn.grid(row=1, column=1, sticky=W)
+        cf = ControlsFrame(self)
+        cf.grid(row=1, column=0, sticky=W)
+        cf.drawControls()
 
     def playPieces(self):
         response = self.jjb9.playPieces(self.activeGame, self.placedPieces)
