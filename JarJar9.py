@@ -36,7 +36,7 @@ class Helpers:
         return response
 
     def getSaltedPassword(self):
-        f = open(os.path.expanduser("~/.wf_login.txt"), "r")
+        f = open(os.path.expanduser("~"+os.sep+".wf_login.txt"), "r")
         f.readline()
         password = f.readline().strip()
         m = hashlib.new("sha1")
@@ -45,7 +45,7 @@ class Helpers:
         return m.hexdigest()
 
     def getUsername(self):
-        f = open(os.path.expanduser("~/.wf_login.txt"),"r")
+        f = open(os.path.expanduser("~"+os.sep+".wf_login.txt"),"r")
         return f.readline().strip()
 
     def debug(self, txt):
