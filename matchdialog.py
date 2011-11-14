@@ -25,27 +25,32 @@ class MatchItem(Frame):
         gameIDLabel     = Label(self, text=options['gameid'])
         playButton      = Button(self, text="Play!",\
                     command=lambda: self.playCallback(options['callback']))
-        nickLabel.grid(row=0, column=0)
-        lastWordLabel.grid(row=1, column=0)
-        gameIDLabel.grid(row=2, column=0)
-        playButton.grid(row=0,column=1,rowspan=3, sticky=W+E+N+S)
+        nickLabel.grid(     row=0,  column=0, sticky=W)
+        lastWordLabel.grid( row=1,  column=0, sticky=W)
+        gameIDLabel.grid(   row=2,  column=0, sticky=W)
+        playButton.grid(    row=0,  column=1,   rowspan=3, sticky=W+E+N+S)
+        self.columnconfigure(0, weight=1)
 
     def playCallback(self, cb):
         self.parent.destroy()
         cb()
 
+
 class MatchDialog:
     root = Tk()
+    root.geometry("200x300")
     root.wm_title("JarJar9: Select match")
 
     # Games is a list of tuples ("opponent", "lastWord", "gameID", 
     #                               playbuttoncallback)
     def displayGames(self, games):
+        f = Frame()
+        self.root.columnconfigure(0, weight=1)
         i = 0
         for (nick, lw, gid, cb) in games:
             match = MatchItem(self.root, nickname=nick, lastword=lw, 
                               gameid=gid, callback=cb)
-            match.grid(row=i, column=0)
+            match.grid(row=i, column=0, sticky=W+E)
             i += 1
 
 if __name__ == "__main__":
