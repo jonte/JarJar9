@@ -19,7 +19,7 @@ from JarJar9 import JJB9
 from JarJar9 import Helpers
 import json
 from Tile import Tile
-#from matchdialog import MatchDialog
+from matchdialog import MatchDialog
 from BoardFrame import BoardFrame
 from RackFrame import RackFrame
 from ControlsFrame import ControlsFrame
@@ -29,12 +29,14 @@ class GUI:
     root.wm_title("JarJar9")
     placedPieces = []
     activeGame = None
+    tickLength = 5000
 
     def __init__(self):
         self.drawControls()
         self.drawRackFrame()
         self.drawBoardFrame()
         self.login()
+        self.root.withdraw()
 
     def drawBoardFrame(self):
         self.boardFrame = BoardFrame(self)
@@ -51,19 +53,39 @@ class GUI:
         self.jjb9.login(self.h.getUsername(), saltedPassword)
         self.chooseGame()
 
+    """
+    Sets gameID, shows main game window and initiates a sync
+    """
+    def startGameWithID(self, gid):
+        self.setGameID(gid)
+        self.root.update()
+        self.root.deiconify()
+        #self.updateLoop()
+        self.syncAction()
+
+    """
+    Triggers a fetch loop, updating the game from the server.
+    TODO: This isn't a valid approach.. The board can't be updated when the player
+            is making a move etc, that would make the board clear.
+    """
+    def updateLoop(self):
+        print "Updating.."
+        self.syncAction()
+        self.root.after(self.tickLength, self.updateLoop)
+
     def setGameID(self, gid):
         self.activeGame = gid
 
     def chooseGame(self):
-#        md = MatchDialog()
-#        selectedItem = None
-#        md.displayGames([('Maria', '<3', '1', lambda: self.setGameID(1)),\
-#                     ('Ivar','hej','2', lambda: self.setGameID(2))])
-#        md.root.wait_window(md.root)
-        self.h.prettyPrintGames(self.jjb9.getGames())
-        game = raw_input("Pick game with ID: ")
-        self.setGameID(game)
-        print "Item", self.activeGame
+        md = MatchDialog()
+        selectedItem = None
+        games = []
+        for game in self.jjb9.getGames():
+            games.append((game['players'][0]['username'],
+                          game['last_move']['main_word'],
+                          game['id'],
+                          lambda: self.startGameWithID(game['id'])))
+        md.displayGames(games)
 
     def syncAction(self):
         game    = json.loads(self.jjb9.getGame(self.activeGame))

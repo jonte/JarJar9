@@ -50,13 +50,16 @@ class JJB9:
 
         response = self.h.doPost(url, self.cookie, messageJSON)
         self.h.debug(response.read())
-
+    
+    """
+    Returns a list of games
+    """
     def getGames(self):
         assert(self.cookie != None)
         url         = "http://game03.wordfeud.com/wf/user/games/"
         message     = ""
-        response    = self.h.doPost(url, self.cookie, message)
-        return response.read()
+        response    = self.h.doPost(url, self.cookie, message).read()
+        return json.loads(response)['content']['games']
 
     def getGame(self, game):
         assert(self.cookie != None)
