@@ -7,7 +7,7 @@ class ControlsFrame(Frame):
         self.parent = parent
 
     def drawControls(self):
-        syncBtn = Button(self, text="Sync",\
+        syncBtn = Button(self, text="Check for moves",\
                          command=lambda: self.parent.syncAction())
         playBtn = Button(self, text="Play!",\
                         command=lambda: self.parent.playPieces())
