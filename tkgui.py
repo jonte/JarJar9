@@ -19,7 +19,7 @@ from JarJar9 import JJB9
 from JarJar9 import Helpers
 import json
 from Tile import Tile
-from matchdialog import MatchDialog
+from MatchDialog import MatchDialog
 from BoardFrame import BoardFrame
 from RackFrame import RackFrame
 from ControlsFrame import ControlsFrame
