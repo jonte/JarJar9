@@ -13,4 +13,11 @@ class ControlsFrame(Frame):
                         command=lambda: self.parent.playPieces())
 
         syncBtn.grid(row=0, column=0, sticky=W)
-        playBtn.grid(row=0, column=1, sticky=W)
+        playBtn.grid(row=0, column=1, sticky=E)
+
+#if __name__ == "__main__":
+#    tk = Tk()
+#    cf = ControlsFrame(tk)
+#    cf.drawControls()
+#    cf.grid(row=0, column=0)
+#    mainloop()

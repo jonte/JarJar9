@@ -19,10 +19,11 @@ from JarJar9 import JJB9
 from JarJar9 import Helpers
 import json
 from Tile import Tile
-from MatchDialog import MatchDialog
-from BoardFrame import BoardFrame
-from RackFrame import RackFrame
-from ControlsFrame import ControlsFrame
+from MatchDialog    import MatchDialog
+from BoardFrame     import BoardFrame
+from RackFrame      import RackFrame
+from ControlsFrame  import ControlsFrame
+from PlayersFrame   import PlayersFrame
 
 class GUI:
     root = Tk()
@@ -35,6 +36,7 @@ class GUI:
         self.drawControls()
         self.drawRackFrame()
         self.drawBoardFrame()
+        self.drawPlayersFrame()
         self.login()
         self.root.withdraw()
 
@@ -45,6 +47,13 @@ class GUI:
     def drawRackFrame(self):
         self.rackFrame = RackFrame(self)
         self.rackFrame.grid(row=1,column=1, sticky=E)
+
+    def drawPlayersFrame(self):
+        self.playersFrame = PlayersFrame(self)
+        self.playersFrame.setPlayerText(1,"1","1")
+        self.playersFrame.setPlayerText(2,"2","2")
+        self.playersFrame.grid(row=2, column = 0, columnspan=3, sticky = W+E)
+        self.playersFrame.columnconfigure(0, weight=1)
 
     def login(self):
         self.jjb9 = JJB9()
