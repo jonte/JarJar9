@@ -116,7 +116,7 @@ class GUI:
         except KeyError:
             rack = game['content']['game']['players'][1]['rack']
         print "Your rack is: %s" % (' '.join(rack))
-        self.rackFrame.drawRack([(x, '1') for x in rack])
+        self.rackFrame.drawRack([(x, self.h.getLetterPoints(x)) for x in rack])
 
     def drawControls(self):
         cf = ControlsFrame(self.root)
