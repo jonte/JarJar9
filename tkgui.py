@@ -98,7 +98,7 @@ class GUI:
             games.append((game['players'][0]['username'],
                           game['last_move']['main_word'],
                           game['id'],
-                          lambda: self.startGameWithID(game['id'])))
+                          self.startGameWithID))
         md.displayGames(games)
 
     def syncAction(self):
@@ -117,9 +117,10 @@ class GUI:
             rack = game['content']['game']['players'][1]['rack']
         print "Your rack is: %s" % (' '.join(rack))
         self.rackFrame.drawRack([(x, self.h.getLetterPoints(x)) for x in rack])
+        self.placedPieces = []
 
     def drawControls(self):
-        cf = ControlsFrame(self.root)
+        cf = ControlsFrame(self)
         cf.grid(row=1, column=0, sticky=W)
         cf.drawControls()
 

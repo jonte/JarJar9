@@ -24,16 +24,16 @@ class MatchItem(Frame):
         lastWordLabel   = Label(self, text=options['lastword'])
         gameIDLabel     = Label(self, text=options['gameid'])
         playButton      = Button(self, text="Play!",\
-                    command=lambda: self.playCallback(options['callback']))
+                    command=lambda: self.playCallback(options['callback'],options['gameid']))
         nickLabel.grid(     row=0,  column=0, sticky=W)
         lastWordLabel.grid( row=1,  column=0, sticky=W)
         gameIDLabel.grid(   row=2,  column=0, sticky=W)
         playButton.grid(    row=0,  column=1,   rowspan=3, sticky=W+E+N+S)
         self.columnconfigure(0, weight=1)
 
-    def playCallback(self, cb):
+    def playCallback(self, cb, id):
         self.parent.destroy()
-        cb()
+        cb(id)
 
 
 class MatchDialog:

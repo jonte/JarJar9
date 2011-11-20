@@ -3,7 +3,7 @@ from Tile import Tile
 
 class ControlsFrame(Frame):
     def __init__(self, parent, **options):
-        Frame.__init__(self, parent)
+        Frame.__init__(self, parent.root)
         self.parent = parent
 
     def drawControls(self):
