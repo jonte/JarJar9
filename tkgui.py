@@ -49,9 +49,7 @@ class GUI:
         self.rackFrame.grid(row=1,column=1, sticky=E)
 
     def drawPlayersFrame(self):
-        self.playersFrame = PlayersFrame(self)
-        self.playersFrame.setPlayerText(1,"1","1")
-        self.playersFrame.setPlayerText(2,"2","2")
+        self.playersFrame = PlayersFrame(self.root)
         self.playersFrame.grid(row=2, column = 0, columnspan=3, sticky = W+E)
         self.playersFrame.columnconfigure(0, weight=1)
 
@@ -85,6 +83,13 @@ class GUI:
     def setGameID(self, gid):
         self.activeGame = gid
 
+    def setPlayerScores(self, playersJson):
+        for playerNum in range(len(playersJson)):
+            self.playersFrame.setPlayerText(
+                        int(playerNum), 
+                        playersJson[playerNum]['username'],
+                        playersJson[playerNum]['score'])
+
     def chooseGame(self):
         md = MatchDialog()
         selectedItem = None
@@ -105,6 +110,7 @@ class GUI:
         for w in board:
             self.boardFrame.setLetter(w[0],w[1],w[2])
         self.rackFrame.clearRack()
+        self.setPlayerScores(game['content']['game']['players'])
         try:
             rack = game['content']['game']['players'][0]['rack']
         except KeyError:
@@ -113,7 +119,7 @@ class GUI:
         self.rackFrame.drawRack([(x, '1') for x in rack])
 
     def drawControls(self):
-        cf = ControlsFrame(self)
+        cf = ControlsFrame(self.root)
         cf.grid(row=1, column=0, sticky=W)
         cf.drawControls()
 
