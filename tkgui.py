@@ -95,9 +95,41 @@ class GUI:
         selectedItem = None
         games = []
         for game in self.jjb9.getGames():
-            games.append((game['players'][0]['username'],
-                          game['last_move']['main_word'],
-                          game['id'],
+            print game
+            if not "players" in game:
+                print "Can't find players"
+                return
+            players = game["players"]
+
+            if len(players) != 2:
+                print "Invalid number of players"
+                return
+            opponent = players[0]
+
+            if not "username" in opponent:
+                print "Can't find username of opponent"
+                return
+            opponentName = opponent["username"]
+
+            if not "last_move" in game:
+                print "Can't find last move"
+                return
+            lastMove = game["last_move"]
+
+            if not "main_word" in game:
+                print "Can't find main word in last move"
+                mainWord = ""
+            else:
+                mainWord = lastMove["main_word"]
+
+            if not "id" in game:
+                print "Can't find id of game"
+                return
+            gameId = game["id"]
+
+            games.append((opponentName,
+                          mainWord,
+                          gameId,
                           self.startGameWithID))
         md.displayGames(games)
 
